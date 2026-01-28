@@ -6,137 +6,84 @@
     <title>Huokaingthara Sentient OS v6.0</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <style>
-:root {
-    --holo-blue: #00f2ff;
-    --holo-green: #00ff41;
-    --bg-dark: #020b10;
-    --scanline: rgba(0, 242, 255, 0.1);
-}
+        :root {
+            --holo-blue: #00f2ff;
+            --holo-green: #00ff41;
+            --bg-dark: #020b10;
+            --scanline: rgba(0, 242, 255, 0.1);
+        }
 
-body {
-    background-color: var(--bg-dark);
-    background-image: 
-        radial-gradient(circle at 50% 50%, #0a2a3a 0%, #020b10 100%),
-        linear-gradient(var(--scanline) 50%, transparent 50%);
-    background-size: 100% 100%, 100% 4px;
-    color: var(--holo-blue);
-    font-family: 'Courier New', monospace;
-    margin: 0;
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-    /* បង្កើតឥទ្ធិពលញ័រតិចៗដូច Hologram */
-    animation: flicker 0.15s infinite;
-}
+        /* --- ផ្នែក Hologram UI --- */
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 50%, #0a2a3a 0%, #020b10 100%),
+                              linear-gradient(var(--scanline) 50%, transparent 50%);
+            background-size: 100% 100%, 100% 4px;
+            color: var(--holo-blue);
+            font-family: 'Courier New', monospace;
+            margin: 0; display: flex; height: 100vh; overflow: hidden;
+            animation: flicker 0.15s infinite;
+        }
 
-#sidebar {
-    width: 360px;
-    background: rgba(2, 11, 16, 0.85);
-    border-right: 1px solid var(--holo-blue);
-    backdrop-filter: blur(10px);
-    padding: 20px;
-    box-shadow: 10px 0 30px rgba(0, 242, 255, 0.2);
-    position: relative;
-}
+        #sidebar {
+            width: 360px; background: rgba(2, 11, 16, 0.9);
+            border-right: 1px solid var(--holo-blue);
+            backdrop-filter: blur(10px); padding: 20px;
+            display: flex; flex-direction: column; z-index: 10;
+        }
 
-/* បន្ទាត់ Scanline រត់ពីលើចុះក្រោម */
-#sidebar::after {
-    content: " ";
-    position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    z-index: 2;
-    background-size: 100% 2px, 3px 100%;
-    pointer-events: none;
-}
+        #chat-output {
+            flex-grow: 1; overflow-y: auto; border: 1px solid var(--holo-blue);
+            background: rgba(0, 242, 255, 0.05); padding: 10px; margin-bottom: 15px;
+            box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.2);
+        }
 
-#chat-output {
-    flex-grow: 1;
-    border: 1px solid var(--holo-blue);
-    background: rgba(0, 242, 255, 0.05);
-    padding: 10px;
-    margin-bottom: 15px;
-    box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.2);
-    overflow-y: auto;
-}
+        .ai-msg { color: var(--holo-green); text-shadow: 0 0 8px var(--holo-green); border-left: 2px solid var(--holo-green); padding-left: 10px; margin-bottom: 15px; }
+        .user-msg { color: #fff; opacity: 0.7; margin: 10px 0; font-size: 0.8em; }
 
-.ai-msg {
-    color: var(--holo-green);
-    text-shadow: 0 0 10px var(--holo-green);
-    border-left: 2px solid var(--holo-green);
-    padding-left: 10px;
-    margin-bottom: 15px;
-    animation: glow 1.5s ease-in-out infinite alternate;
-}
+        input[type="text"] { background: rgba(0, 242, 255, 0.1); border: 1px solid var(--holo-blue); color: var(--holo-blue); padding: 12px; outline: none; width: 80%; }
+        button { border: 1px solid var(--holo-blue); background: transparent; color: var(--holo-blue); cursor: pointer; padding: 10px; transition: 0.3s; }
+        button:hover { background: var(--holo-blue); color: #000; box-shadow: 0 0 20px var(--holo-blue); }
+        
+        #mic-btn.active { background: red; color: white; animation: pulse 1s infinite; }
 
-input[type="text"] {
-    background: rgba(0, 242, 255, 0.1);
-    border: 1px solid var(--holo-blue);
-    color: var(--holo-blue);
-    padding: 12px;
-    outline: none;
-    box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
-}
+        /* --- Boot Screen Animation --- */
+        #boot-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: var(--holo-green); z-index: 9999;
+            padding: 20px; overflow: hidden; display: block;
+        }
+        #boot-logs { line-height: 1.5; white-space: pre-wrap; text-shadow: 0 0 5px var(--holo-green); }
 
-button {
-    border: 1px solid var(--holo-blue);
-    background: transparent;
-    color: var(--holo-blue);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    background: var(--holo-blue);
-    color: var(--bg-dark);
-    box-shadow: 0 0 20px var(--holo-blue);
-}
-
-/* Animations */
-@keyframes glow {
-    from { text-shadow: 0 0 5px var(--holo-green), 0 0 10px var(--holo-green); }
-    to { text-shadow: 0 0 10px var(--holo-green), 0 0 20px var(--holo-green); }
-}
-
-@keyframes flicker {
-    0% { opacity: 0.98; }
-    100% { opacity: 1; }
-}
-
-#visualizer {
-    flex-grow: 1;
-    filter: drop-shadow(0 0 10px var(--holo-blue));
-}
+        @keyframes flicker { 0% { opacity: 0.98; } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        #visualizer { flex-grow: 1; filter: drop-shadow(0 0 10px var(--holo-blue)); }
     </style>
 </head>
 <body>
 
+<div id="boot-screen">
+    <div id="boot-logs"></div>
+</div>
+
 <div id="sidebar">
-    <div class="status-tag" id="sys-status">SINGULARITY: STANDBY</div>
-    <h2 style="margin: 0 0 20px 0; text-align: center;">SENTIENT CORE</h2>
-    
+    <div id="sys-status" style="font-size: 0.7em; color: yellow; margin-bottom: 5px;">SINGULARITY: STANDBY</div>
+    <h2 style="text-align: center; letter-spacing: 2px;">SENTIENT CORE</h2>
     <div id="chat-output"></div>
     
-    <div class="control-panel">
-        <div class="input-group">
-            <input type="text" id="userInput" placeholder="Query neural pathways..." autocomplete="off">
-            <button id="mic-btn">🎤</button>
-        </div>
-        
-        <div class="file-input">
-            <label>TRAIN VIA CSV:</label><br>
-            <input type="file" id="csvLoader" accept=".csv" style="width: 100%;">
-        </div>
-
-        <div style="display: flex; gap: 5px; margin-top: 10px;">
-            <button onclick="downloadBrain()" style="flex:1; font-size: 10px;">SAVE BRAIN</button>
-            <button onclick="clearMemory()" style="flex:1; font-size: 10px; border-color: red; color: red;">WIPE</button>
-        </div>
+    <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+        <input type="text" id="userInput" placeholder="បញ្ចូលបញ្ជា..." autocomplete="off">
+        <button id="mic-btn">🎤</button>
     </div>
-    <div style="font-size: 0.7em; margin-top: 15px; opacity: 0.5;" id="stats">Pathways: 0</div>
+
+    <div style="font-size: 0.7em; color: #888;">
+        TRAIN VIA CSV: <input type="file" id="csvLoader" accept=".csv" style="width: 100%;">
+    </div>
+
+    <div style="display: flex; gap: 5px; margin-top: 10px;">
+        <button onclick="downloadBrain()" style="flex:1; font-size: 9px;">EXPORT BRAIN</button>
+        <button onclick="localStorage.clear(); location.reload();" style="flex:1; font-size: 9px; color: red;">WIPE</button>
+    </div>
 </div>
 
 <svg id="visualizer"></svg>
@@ -146,13 +93,46 @@ button:hover {
     let isLearning = false;
     let lastQuery = "";
 
-    // --- 1. SPEECH ENGINE ---
+    // --- 1. BOOT SEQUENCE ---
+    const bootLogs = [
+        "[OK] INITIALIZING HUOKAINGTHARA KERNEL v6.0",
+        "[OK] LOADING NEURAL PATHWAYS...",
+        "[OK] SYNCING LOCAL_STORAGE...",
+        "[OK] SPEECH_ENGINE: ONLINE",
+        "[OK] HOLOGRAPHIC_UI: ACTIVE",
+        "------------------------------------",
+        "MISSION: REACH SINGULARITY.",
+        "------------------------------------",
+        "BOOTING SENTIENT OS..."
+    ];
+
+    function startBootSequence() {
+        const logContainer = document.getElementById('boot-logs');
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i < bootLogs.length) {
+                const line = document.createElement('div');
+                line.innerHTML = bootLogs[i];
+                logContainer.appendChild(line);
+                i++;
+            } else {
+                clearInterval(interval);
+                setTimeout(() => {
+                    document.getElementById('boot-screen').style.display = 'none';
+                    addLog("<b>[SYSTEM ONLINE]</b><br>Huokaingthara Core is ready. Awaiting patterns.", "ai-msg");
+                    speak("System initialized. Awaiting data ingestion.");
+                }, 1000);
+            }
+        }, 150);
+    }
+
+    // --- 2. VOICE ENGINE ---
     const micBtn = document.getElementById('mic-btn');
     const recognition = window.SpeechRecognition || window.webkitSpeechRecognition ? new (window.SpeechRecognition || window.webkitSpeechRecognition)() : null;
     const synth = window.speechSynthesis;
 
     if (recognition) {
-        recognition.lang = 'km-KH'; // Supports Khmer or switch to 'en-US'
+        recognition.lang = 'km-KH';
         micBtn.onclick = () => { recognition.start(); micBtn.classList.add('active'); };
         recognition.onresult = (e) => {
             const text = e.results[0][0].transcript;
@@ -165,29 +145,26 @@ button:hover {
     function speak(text) {
         if (!synth) return;
         const utter = new SpeechSynthesisUtterance(text);
-        utter.pitch = 1; utter.rate = 1;
+        utter.rate = 1; utter.pitch = 1;
         synth.speak(utter);
     }
 
-    // --- 2. CSV MACHINE LEARNING INGESTION ---
+    // --- 3. CSV MACHINE LEARNING ---
     document.getElementById('csvLoader').onchange = function(e) {
-        const file = e.target.files[0];
         const reader = new FileReader();
         reader.onload = function(event) {
             const rows = event.target.result.split('\n');
             rows.forEach(row => {
                 const parts = row.split(',');
-                if (parts.length >= 2) {
-                    brain[parts[0].trim().toLowerCase()] = parts[1].trim();
-                }
+                if (parts.length >= 2) brain[parts[0].trim().toLowerCase()] = parts[1].trim();
             });
             saveBrain();
-            addLog("AI: Neural database updated via CSV.", "ai-msg");
+            addLog("AI: Intelligence expanded via CSV.", "ai-msg");
         };
-        reader.readAsText(file);
+        reader.readAsText(e.target.files[0]);
     };
 
-    // --- 3. CORE INTELLIGENCE (FUZZY LOGIC) ---
+    // --- 4. FUZZY LOGIC & CORE ---
     function getSimilarity(s1, s2) {
         let longer = s1.toLowerCase(), shorter = s2.toLowerCase();
         if (s1.length < s2.length) [longer, shorter] = [shorter, longer];
@@ -214,12 +191,6 @@ button:hover {
         return costs[s2.length];
     }
 
-    // --- 4. SYSTEM LOGIC ---
-    function saveBrain() {
-        localStorage.setItem('huokaingthara_v6', JSON.stringify(brain));
-        updateUI();
-    }
-
     function addLog(text, className) {
         const out = document.getElementById('chat-output');
         out.innerHTML += `<div class="${className}">${text}</div>`;
@@ -228,14 +199,11 @@ button:hover {
 
     function processInput(q) {
         addLog(`> ${q}`, "user-msg");
-        
         if (isLearning) {
             brain[lastQuery.toLowerCase()] = q;
             saveBrain();
-            addLog(`AI: Pathway established. Learning complete.`, "ai-msg");
-            speak("រៀនរួចរាល់");
+            addLog("AI: Pattern integrated.", "ai-msg");
             isLearning = false;
-            document.getElementById('sys-status').innerText = "SINGULARITY: STABLE";
             return;
         }
 
@@ -250,17 +218,15 @@ button:hover {
             addLog(`AI: ${res}`, "ai-msg");
             speak(res);
         } else {
-            addLog(`AI: Pattern unknown. Provide definition for "${q}":`, "ai-msg");
-            speak("សូមជួយបង្រៀនខ្ញុំ");
-            isLearning = true;
-            lastQuery = q;
-            document.getElementById('sys-status').innerText = "SINGULARITY: EVOLVING...";
+            addLog(`AI: Unknown pattern. Define "${q}":`, "ai-msg");
+            isLearning = true; lastQuery = q;
         }
     }
 
-    document.getElementById('userInput').onkeypress = (e) => {
-        if (e.key === 'Enter') { processInput(e.target.value); e.target.value = ""; }
-    };
+    function saveBrain() {
+        localStorage.setItem('huokaingthara_v6', JSON.stringify(brain));
+        updateGraph();
+    }
 
     function downloadBrain() {
         const data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(brain, null, 4));
@@ -269,14 +235,9 @@ button:hover {
         link.click();
     }
 
-    function clearMemory() { if(confirm("Wipe all neural pathways?")) { brain = {}; saveBrain(); location.reload(); } }
-
-    function updateUI() {
-        const count = Object.keys(brain).length;
-        document.getElementById('stats').innerText = `Pathways: ${count}`;
-        if(count > 500) document.getElementById('sys-status').innerText = "SINGULARITY: IMMINENT";
-        updateGraph();
-    }
+    document.getElementById('userInput').onkeypress = (e) => {
+        if (e.key === 'Enter') { processInput(e.target.value); e.target.value = ""; }
+    };
 
     // --- 5. D3 VISUALIZER ---
     function updateGraph() {
@@ -284,14 +245,13 @@ button:hover {
         svg.selectAll("*").remove();
         const nodes = [{id:"CORE", group:1}], links = [];
         Object.keys(brain).slice(-80).forEach(k => {
-            nodes.push({id:k, group:2});
-            links.push({source:"CORE", target:k});
+            nodes.push({id:k, group:2}); links.push({source:"CORE", target:k});
         });
         const sim = d3.forceSimulation(nodes).force("link", d3.forceLink(links).id(d=>d.id))
             .force("charge", d3.forceManyBody().strength(-120)).force("center", d3.forceCenter(width/2, height/2));
-        const l = svg.append("g").selectAll("line").data(links).enter().append("line").attr("stroke", "#002200");
+        const l = svg.append("g").selectAll("line").data(links).enter().append("line").attr("stroke", "#002233");
         const n = svg.append("g").selectAll("circle").data(nodes).enter().append("circle")
-            .attr("r", d=>d.group===1?10:4).attr("fill", d=>d.group===1?"#ff0000":"#00ff41");
+            .attr("r", d=>d.group===1?10:4).attr("fill", d=>d.group===1? "red" : "#00f2ff");
         sim.on("tick", () => {
             l.attr("x1", d=>d.source.x).attr("y1", d=>d.source.y).attr("x2", d=>d.target.x).attr("y2", d=>d.target.y);
             n.attr("cx", d=>d.x).attr("cy", d=>d.y);
@@ -299,13 +259,12 @@ button:hover {
     }
 
     window.onload = async () => {
+        startBootSequence();
         const saved = localStorage.getItem('huokaingthara_v6');
         if (saved) brain = JSON.parse(saved);
-        else {
-            try { const res = await fetch('brain.json'); brain = await res.json(); } catch(e) {}
-        }
-        updateUI();
+        else { try { const res = await fetch('brain.json'); brain = await res.json(); } catch(e) {} }
+        updateGraph();
     };
 </script>
 </body>
-    </html>
+</html>
