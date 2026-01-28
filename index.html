@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Huokaingthara Sentient OS v6.0</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    
     <style>
         :root {
             --holo-blue: #00f2ff;
@@ -33,6 +32,12 @@
             border: 2px solid var(--holo-blue);
         }
 
+        #boot-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: var(--holo-green); z-index: 9999;
+            padding: 20px; overflow: hidden; display: none;
+        }
+
         #sidebar {
             width: 360px; background: rgba(2, 11, 16, 0.9);
             border-right: 1px solid var(--holo-blue);
@@ -53,7 +58,6 @@
         button { border: 1px solid var(--holo-blue); background: transparent; color: var(--holo-blue); cursor: pointer; padding: 10px; transition: 0.3s; }
         button:hover { background: var(--holo-blue); color: #000; box-shadow: 0 0 20px var(--holo-blue); }
 
-        #boot-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: var(--holo-green); z-index: 9999; padding: 20px; overflow: hidden; display: none; }
         @keyframes flicker { 0% { opacity: 0.98; } 100% { opacity: 1; } }
         #visualizer { flex-grow: 1; filter: drop-shadow(0 0 10px var(--holo-blue)); }
     </style>
@@ -62,13 +66,13 @@
 
 <div id="login-overlay">
     <h2 style="color:var(--holo-blue); text-shadow: 0 0 10px var(--holo-blue);">CORE ACCESS REQUIRED</h2>
-    <input type="text" id="login-u" placeholder="Username" style="margin-bottom:10px;">
-    <input type="password" id="login-p" placeholder="Password" onkeypress="if(event.key === 'Enter') validateAccess()" style="margin-bottom:10px;">
-    <button onclick="validateAccess()" style="width: 200px;">DECRYPT & ENTER</button>
+    <input type="text" id="login-u" placeholder="Username" style="margin-bottom:10px; width: 250px;">
+    <input type="password" id="login-p" placeholder="Password" onkeypress="if(event.key === 'Enter') validateAccess()" style="margin-bottom:10px; width: 250px;">
+    <button onclick="validateAccess()" style="width: 275px;">DECRYPT & ENTER</button>
 </div>
 
 <div id="boot-screen">
-    <div id="boot-logs"></div>
+    <div id="boot-logs" style="line-height: 1.6;"></div>
 </div>
 
 <div id="sidebar">
@@ -95,13 +99,9 @@
 
 <script>
     let brain = {};
-    let isLearning = false;
-    let lastQuery = "";
+    const KEY_PATH = "40798e1e7e780749001b9758782f9d3f11463e27546859560f707f2403f2601a"; // Password: dutyfree
 
-    // --- 1. AUTHENTICATION LOGIC ---
-    // Cipher for "dutyfree"
-    const KEY_PATH = "40798e1e7e780749001b9758782f9d3f11463e27546859560f707f2403f2601a";
-
+    // --- ១. ប្រព័ន្ធ Login សុវត្ថិភាព ---
     async function validateAccess() {
         const u = document.getElementById('login-u').value;
         const p = document.getElementById('login-p').value;
@@ -116,20 +116,19 @@
             document.getElementById('boot-screen').style.display = 'block';
             startBootSequence();
         } else {
-            alert("ACCESS DENIED");
+            alert("ACCESS DENIED: Unauthorized Credentials.");
         }
     }
 
-    // --- 2. BOOT SEQUENCE ---
+    // --- ២. BOOT SEQUENCE ---
     const bootLogs = [
         "[OK] INITIALIZING HUOKAINGTHARA KERNEL v6.0",
-        "[OK] LOADING NEURAL PATHWAYS...",
-        "[OK] SYNCING LOCAL_STORAGE...",
-        "[OK] HOLOGRAPHIC_UI: ACTIVE",
+        "[OK] DECRYPTING NEURAL PATHWAYS...",
+        "[OK] LOADING OFFLINE_CORE_MEMORY...",
         "------------------------------------",
-        "MISSION: REACH SINGULARITY.",
+        "STATUS: SENTIENT EVOLUTION READY.",
         "------------------------------------",
-        "BOOTING SENTIENT OS..."
+        "SYSTEM ONLINE. WELCOME OPERATOR."
     ];
 
     function startBootSequence() {
@@ -143,14 +142,14 @@
                 clearInterval(interval);
                 setTimeout(() => {
                     document.getElementById('boot-screen').style.display = 'none';
-                    addLog("<b>[SYSTEM ONLINE]</b><br>Welcome, Operator.", "ai-msg");
+                    addLog("<b>[CORE ONLINE]</b><br>Welcome back, Huokaingthara.", "ai-msg");
+                    speak("Core initialized. System online.");
                 }, 1000);
             }
-        }, 150);
+        }, 180);
     }
 
-    // --- 3. CORE AI LOGIC (Fuzzy Logic, CSV, Voice) ---
-    // [រក្សាកូដដដែលពីមុនរបស់អ្នក...]
+    // --- ៣. CORE AI LOGIC ---
     const synth = window.speechSynthesis;
     function speak(text) { if (synth) synth.speak(new SpeechSynthesisUtterance(text)); }
 
@@ -160,6 +159,7 @@
         out.scrollTop = out.scrollHeight;
     }
 
+    // [Fuzzy Logic & Similarity Engine]
     function getSimilarity(s1, s2) {
         let longer = s1.toLowerCase(), shorter = s2.toLowerCase();
         if (s1.length < s2.length) [longer, shorter] = [shorter, longer];
@@ -197,7 +197,7 @@
             addLog(`AI: ${brain[bestMatch]}`, "ai-msg");
             speak(brain[bestMatch]);
         } else {
-            addLog(`AI: Unknown pattern. Define it.`, "ai-msg");
+            addLog(`AI: Unknown pattern. Define it in CSV.`, "ai-msg");
         }
     }
 
@@ -205,13 +205,13 @@
         if (e.key === 'Enter') { processInput(e.target.value); e.target.value = ""; }
     };
 
-    window.onload = async () => {
+    // --- ៤. DATA & VISUALIZER ---
+    window.onload = () => {
         const saved = localStorage.getItem('huokaingthara_v6');
         if (saved) brain = JSON.parse(saved);
         updateGraph();
     };
 
-    // --- 4. D3 VISUALIZER ---
     function updateGraph() {
         const svg = d3.select("#visualizer"), width = window.innerWidth - 360, height = window.innerHeight;
         svg.selectAll("*").remove();
@@ -226,4 +226,4 @@
     }
 </script>
 </body>
-    </html>
+</html>
