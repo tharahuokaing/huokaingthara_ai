@@ -1,43 +1,61 @@
-🧠 Huokaingthara AI: Sentient Neural Core
-Huokaingthara AI is an autonomous, offline-first sentient system designed for pattern recognition, cybersecurity knowledge management, and interactive learning. It features a robust neural core that evolves through user interaction and visualizes its knowledge expansion in real-time.
-🚀 Core Features
- * Neural Migration Engine: Automatically converts legacy training_data.txt into a structured, high-performance brain.json.
- * Autonomous Learning: If the AI encounters an unknown pattern, it enters "Learning Mode" to integrate new definitions into its core memory.
- * Interactive Dashboard: A dark-mode web interface featuring a D3.js Force-Directed Graph to visualize neural connections.
- * Workspace Hygiene: An built-in "immune system" that sanitizes the directory, rotates bloated logs, and manages system health.
- * High-Speed Matching: Utilizes Sequence Alignment algorithms (difflib) for fuzzy pattern matching with confidence scoring.
-📂 System Architecture
-The system operates on a tiered memory hierarchy to ensure data integrity and performance:
+# 🧠 Huokaingthara AI: Sentient Neural Core
+**An autonomous, offline-first knowledge management & pattern recognition engine.**
+
+[![Status](https://img.shields.io/badge/Status-Active-success.svg)](#)
+[![Security](https://img.shields.io/badge/Security-Sanitized-blue.svg)](#)
+[![Platform](https://img.shields.io/badge/Environment-Termux%20|%20Linux%20|%20Windows-lightgrey.svg)](#)
+
+Huokaingthara AI is a local-first neural architecture designed for high-speed information retrieval and cybersecurity knowledge mapping. Unlike cloud-based LLMs, it operates entirely within your local environment, ensuring total privacy and data sovereignty. It features a dynamic D3.js visualization layer to map "thought" connections in real-time.
+
+---
+
+## ⚡ Special Abilities (Unique Capabilities)
+
+### 1. **Neural Migration & Evolutionary Memory**
+The system features a **Self-Evolving Schema**. It can ingest legacy unstructured data (`training_data.txt`) and migrate it into a high-performance `brain.json` structure. It doesn't just store data; it optimizes it for retrieval speed.
+
+### 2. **Autonomous Immune System (Workspace Hygiene)**
+The AI manages its own host environment. Upon boot, it performs "System Hygiene":
+* **Auto-Sanitization:** Identifies and removes non-manifest files to prevent directory clutter.
+* **Log Rotation:** Automatically archives bloated logs to maintain disk performance.
+* **Integrity Backups:** Generates recovery snapshots of the Neural Core (`brain.json`) before every session.
+
+### 3. **Fuzzy-Logic Pattern Matching**
+Using **Sequence Alignment Algorithms**, the AI can understand misspelled or partial queries. It calculates a "Confidence Score" for every response, ensuring that the user knows exactly how accurate the matched data is.
+
+### 4. **Live Neural Mapping (D3.js Core)**
+The AI visualizes its "brain" through a **Force-Directed Graph**. As new patterns are learned, the web interface updates dynamically, allowing the operator to see the density and growth of their knowledge base visually.
+
+---
+
+## 📂 System Architecture
+The system operates on a tiered memory hierarchy:
+
 | Component | File | Purpose |
-|---|---|---|
-| Neural Core | brain.json | The primary structured memory. |
-| Ancestral DNA | training_data.txt | Initial raw knowledge source. |
-| Nervous System | templates/index.html | Visual interface and D3.js engine. |
-| Neural Logs | neural_activity.log | Technical audit of confidence and matches. |
-| Interaction Logs | chat_logs.txt | Human-readable conversation history. |
-🛠️ Installation & Setup
-1. Prerequisites (Termux / Linux / Windows)
-Ensure you have Python 3.10+ installed. Install the required dependencies:
-pip install flask pyttsx3 cryptography
+| :--- | :--- | :--- |
+| **Neural Core** | `brain.json` | The primary structured memory. |
+| **Nervous System** | `index.html` | D3.js Engine & Web Visualizer. |
+| **Immune System** | `auto_sanitizer` | Security and maintenance module. |
+| **Audit Logs** | `neural_activity.log` | Technical audit of confidence and matches. |
 
-2. Deployment
- * Place your huokaingthara_autonomous.py in your project folder.
- * Ensure your 250+ entries are in training_data.txt (formatted as Key|Value).
- * Place index.html inside a folder named templates.
- * Run the system:
-   python huokaingthara_autonomous.py
+---
 
-3. Accessing the Interface
-Open your browser and navigate to:
-http://localhost:5000 or http://127.0.0.1:5000
-🧠 Autonomous Commands
- * status: View system uptime, database size, and interaction count.
- * exit: Securely shut down the neural core.
- * Learning Mode: Toggle the switch in the UI to allow the AI to ask for definitions when it encounters unknown queries.
-🛡️ Security & Hygiene
-The system includes an Auto-Sanitizer. Upon boot, it will:
- * Create a Recovery ZIP of your brain.json.
- * Remove any files that are not part of the core manifest.
- * Archive logs larger than 5MB to maintain peak performance.
-📜 License
-Huokaingthara AI is a private autonomous system. All neural patterns generated are the property of the operator.
+## 🛠️ Deployment & Usage
+
+1. **Environment Setup:**
+   ```bash
+   pip install flask pyttsx3 cryptography
+Initialization: Place your training_data.txt (Format: Key|Value) in the root directory and run:
+
+Bash
+python huokaingthara_autonomous.py
+Interface: Access the Neural Dashboard at http://localhost:5000.
+
+🛡️ Security Statement
+Huokaingthara AI is an offline tool.
+
+Data Privacy: No data is transmitted to external servers.
+
+No Credential Harvesting: This system is for knowledge management and does not request or store passwords, API keys, or personal identification.
+
+Open Source Transparency: All logic is contained within the local Python script for user audit.
