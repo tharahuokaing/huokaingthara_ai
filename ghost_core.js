@@ -64,7 +64,7 @@ function editDistance(s1, s2) {
 
 // --- MAIN PROCESS ---
 function process(q) {
-    if (q === MASTER_KEY) { isEmperorMode = true; speak("អំណាចមហាក្សត្រត្រូវបានដោះសោរ"); return; }
+    if (q === MASTER_KEY) { isEmperorMode = true; speak("អំណាចអធិរាជត្រូវបានដោះសោរ"); return; }
     
     let rawQ = q.trim();
     let qLow = rawQ.toLowerCase();
